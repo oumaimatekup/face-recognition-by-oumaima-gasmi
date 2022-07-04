@@ -1,0 +1,116 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Apr 14 09:41:28 2022
+
+@author: gasmi
+"""
+from PIL import Image 
+
+import numpy as np 
+img= Image.open("C:/Users/gasmi/Downloads/yalefaces/yalefaces/subject01.centerlight")
+import matplotlib.pyplot as plt 
+plt.imshow(img,'gray')
+img1 = np.array(img)
+img2 = img1.reshape(img1.shape[0] * img1.shape[1])
+import glob 
+path = glob.glob("C:/Users/gasmi/Downloads/yalefaces/yalefaces/*")
+LIS=[]
+for imo in path :
+    #print(imo)
+    ima=Image.open(imo)
+    imaArray = np.array(ima)
+    tt=imaArray.reshape(imaArray.shape[0]*imaArray.shape[1])
+    LIS.append(tt)
+
+
+from sklearn.decomposition import PCA
+# import all libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import StandardScaler
+
+# Scale data before applying PCA
+
+
+# Set the n_components=165
+principal=PCA(n_components=165)
+principal.fit(LIS)
+x=principal.transform(LIS)
+
+# Check the dimensions of data after PCA
+print(x.shape)
+
+#classification svm calculee accc confusin 
+
+import pandas as pd
+from sklearn import svm
+from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split
+
+label=[]
+#for j in range(1,16):
+   # for i in range(0,11):
+      #  label.append(j)
+
+label=np.repeat(range(1,16),11)
+x_train , x_test, train_label , test_label =train_test_split(x,
+label,test_size = 0.33 , random_state=0)
+model=svm.SVC(kernel='linear',C=1)  
+model.fit(x_train,train_label)
+pred=model.predict(x_test)
+print(pred)
+from sklearn.metrics import accuracy_score
+ACC=accuracy_score(test_label,pred)*100
+print("accurancy is ",ACC)
+from sklearn.metrics import confusion_matrix 
+CM= confusion_matrix(test_label, pred)
+print(CM)
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+class_names1=[1,2,3,4,5,7,8,9,10,11,12,13,14,15] # name  of classes
+fig1, ax1 = plt.subplots()
+tick_marks1 = np.arange(len(class_names1))
+plt.xticks(tick_marks1, class_names1)
+plt.yticks(tick_marks1, class_names1)
+tick_marks1 = np.arange(len(class_names1))
+plt.xticks(tick_marks1, class_names1)
+plt.yticks(tick_marks1, class_names1)
+
+sns.heatmap(CM, annot=True, cmap="BrBG_r" ,fmt='g')
+plt.tight_layout()
+plt.title('Confusion matrix ', y=1.1)
+plt.ylabel('Actual label')
+plt.xlabel('Predicted label')
+
+
+#############################################
+##########################################
+####################linear discrimenent analysis LDA ################
+###########################################
+
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
+
+#réduction:
+
+tr = LDA(n_components=14)
+pred1=tr.fit_transform(dataimage,labels)
+
+pred1.shape
+
+#classification
+
+from sklearn.model_selection import train_test_split
+x_train1,x_test1,train_label1,test_label1 = train_test_split(pred1,labels, test_size=0.33, random_state=0)
+
+#train:
+
+tr.fit(x_train1,train_label1)
+
+#pred:
+
+prd=tr.predict(x_test1)
+from sklearn.metrics import accuracy_score
+Acc=accuracy_score(test_label1,prd)*100
+print(Acc)
